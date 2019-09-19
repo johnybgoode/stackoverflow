@@ -7,6 +7,7 @@
 //
 
 #import "NetworkManager.h"
+#import "QuestionItem.h"
 
 @implementation NetworkManager
 static NetworkManager * _Instance;
@@ -43,18 +44,13 @@ static NetworkManager * _Instance;
        NSDictionary *dJSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
         //NSString *dJSON =  [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"response: %@", dJSON);
-        /*if ((error == nil)&&(statusCode==200)) {
-            if([dJSON[@"state"] integerValue]==200){
+        if ((error == nil)&&(statusCode==200)) {
+            
                 successBlock(dJSON);
             }
-            else{
-                errorBlock([self errorMessageWithStatusCode:[dJSON[@"state"] integerValue]] );
-            }
-            
-            
-        } else {
+        else {
             errorBlock([self errorMessageWithStatusCode:statusCode]);
-        }*/
+        }
     }];
     [getDataTask resume];
 }
@@ -91,16 +87,21 @@ static NetworkManager * _Instance;
         }
     }
 }
-- (void) getQuestions:(void (^)(NSDictionary *data))successBlock  Error:(void (^)(NSString *errorMessage))errorBlock{
+- (void) getQuestions:(void (^)(NSArray *items))successBlock  Error:(void (^)(NSString *errorMessage))errorBlock{
     NSString *subUrl = @"/questions";
-    NSInteger fromDate = [[NSDate date] timeIntervalSince1970]-7*24*60*60;
+    NSInteger fromDate = [[NSDate date] timeIntervalSince1970]-24*60*60;
     NSInteger toDate = [[NSDate date] timeIntervalSince1970];
     NSString *prs = [NSString stringWithFormat:@"sort=%@&min=%i&fromdate=%li&todate=%li&site=%@",@"votes", 10, fromDate, toDate, @"stackoverflow"];
     
     [self get:prs andUrl:subUrl success:^(NSDictionary *response) {
-        
+        NSMutableArray * questionItems = [NSMutableArray array];
+        for(NSDictionary *dict in response[@"items"]){
+            QuestionItem *qi = [[QuestionItem alloc] initWithDictionary:dict];
+            [questionItems addObject:qi];
+        }
+        successBlock(questionItems);
     } error:^(NSString *errorMessage) {
-        
+        errorBlock(errorMessage);
     }];
     
     

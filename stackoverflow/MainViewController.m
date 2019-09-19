@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   [[NetworkManager sharedSource] getQuestions:^(NSDictionary * _Nonnull data) {
+    [[NetworkManager sharedSource] getQuestions:^(NSArray * _Nonnull items) {
         
     } Error:^(NSString * _Nonnull errorMessage) {
         

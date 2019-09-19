@@ -16,6 +16,8 @@
 		2C6A46F7232FF2EB00AB0669 /* stackoverflowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C6A46F6232FF2EB00AB0669 /* stackoverflowTests.m */; };
 		2C6A4702232FF2EB00AB0669 /* stackoverflowUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C6A4701232FF2EB00AB0669 /* stackoverflowUITests.m */; };
 		2CCB2B862332654A004F5CA8 /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B852332654A004F5CA8 /* NetworkManager.m */; };
+		2CCB2B892332CD6B004F5CA8 /* QuestionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B882332CD6B004F5CA8 /* QuestionItem.m */; };
+		2CCB2B8D2332D234004F5CA8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B8C2332D234004F5CA8 /* User.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,10 @@
 		2C6A4703232FF2EB00AB0669 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2CCB2B842332654A004F5CA8 /* NetworkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
 		2CCB2B852332654A004F5CA8 /* NetworkManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkManager.m; sourceTree = "<group>"; };
+		2CCB2B872332CD6B004F5CA8 /* QuestionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionItem.h; sourceTree = "<group>"; };
+		2CCB2B882332CD6B004F5CA8 /* QuestionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionItem.m; sourceTree = "<group>"; };
+		2CCB2B8B2332D234004F5CA8 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		2CCB2B8C2332D234004F5CA8 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +119,7 @@
 				2C6A46E8232FF2EB00AB0669 /* LaunchScreen.storyboard */,
 				2C6A46EB232FF2EB00AB0669 /* Info.plist */,
 				2C6A46EC232FF2EB00AB0669 /* main.m */,
+				2CCB2B8A2332CD75004F5CA8 /* Parsed Objects */,
 				2CCB2B842332654A004F5CA8 /* NetworkManager.h */,
 				2CCB2B852332654A004F5CA8 /* NetworkManager.m */,
 			);
@@ -135,6 +142,17 @@
 				2C6A4703232FF2EB00AB0669 /* Info.plist */,
 			);
 			path = stackoverflowUITests;
+			sourceTree = "<group>";
+		};
+		2CCB2B8A2332CD75004F5CA8 /* Parsed Objects */ = {
+			isa = PBXGroup;
+			children = (
+				2CCB2B872332CD6B004F5CA8 /* QuestionItem.h */,
+				2CCB2B882332CD6B004F5CA8 /* QuestionItem.m */,
+				2CCB2B8B2332D234004F5CA8 /* User.h */,
+				2CCB2B8C2332D234004F5CA8 /* User.m */,
+			);
+			path = "Parsed Objects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,7 +285,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CCB2B892332CD6B004F5CA8 /* QuestionItem.m in Sources */,
 				2CCB2B862332654A004F5CA8 /* NetworkManager.m in Sources */,
+				2CCB2B8D2332D234004F5CA8 /* User.m in Sources */,
 				2C6A46E2232FF2E900AB0669 /* MainViewController.m in Sources */,
 				2C6A46ED232FF2EB00AB0669 /* main.m in Sources */,
 				2C6A46DF232FF2E900AB0669 /* AppDelegate.m in Sources */,

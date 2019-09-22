@@ -51,18 +51,22 @@
     
     return cell;
 }
-- (void) initCell:(QuestionTableViewCell*)qtc withQuestionItem:(QuestionItem*)qi{
-    
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
     dispatch_async(dispatch_get_global_queue(0,0), ^{
+         QuestionItem * qi = self.questions[indexPath.row];
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:qi.owner.profile_image]];
         if ( data == nil ){
             return;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             // WARNING: is the cell still using the same data by this point??
-            qtc.imageView.image = [UIImage imageWithData: data];
+            cell.imageView.image = [UIImage imageWithData: data];
         });
     });
+}
+- (void) initCell:(QuestionTableViewCell*)qtc withQuestionItem:(QuestionItem*)qi{
+    
+    
     qtc.user_name_lbl.text = qi.owner.display_name;
     qtc.question_title_lbl.text = qi.title;
     qtc.tags_collection_view.dataSource = self;

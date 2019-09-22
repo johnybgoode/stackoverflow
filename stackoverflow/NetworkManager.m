@@ -89,7 +89,7 @@ static NetworkManager * _Instance;
 }
 - (void) getQuestions:(void (^)(NSArray *items))successBlock  Error:(void (^)(NSString *errorMessage))errorBlock{
     NSString *subUrl = @"/questions";
-    NSInteger fromDate = [[NSDate date] timeIntervalSince1970]-24*60*60;
+    NSInteger fromDate = [[NSDate date] timeIntervalSince1970]-7*24*60*60;
     NSInteger toDate = [[NSDate date] timeIntervalSince1970];
     NSString *prs = [NSString stringWithFormat:@"sort=%@&min=%i&fromdate=%li&todate=%li&site=%@",@"votes", 10, fromDate, toDate, @"stackoverflow"];
     

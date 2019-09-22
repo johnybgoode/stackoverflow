@@ -52,7 +52,17 @@
     return cell;
 }
 - (void) initCell:(QuestionTableViewCell*)qtc withQuestionItem:(QuestionItem*)qi{
-    //cell.imageView.image - здесь должна быть загрузка фотографии по ссылке
+    
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:qi.owner.profile_image]];
+        if ( data == nil ){
+            return;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // WARNING: is the cell still using the same data by this point??
+            qtc.imageView.image = [UIImage imageWithData: data];
+        });
+    });
     qtc.user_name_lbl.text = qi.owner.display_name;
     qtc.question_title_lbl.text = qi.title;
     qtc.tags_collection_view.dataSource = self;
@@ -80,7 +90,7 @@
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    return CGSizeMake(110.f, 40.f);
+    return CGSizeMake(100.f, 40.f);
 }
 
 

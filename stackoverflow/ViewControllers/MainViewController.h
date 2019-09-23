@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface MainViewController : UIViewController<UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate>
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property(strong, nonatomic) NSArray * questions;
+
+
 
 @end
 

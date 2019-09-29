@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 #import "User.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface QuestionItem : NSObject
+@interface QuestionItem : NSObject<NSCoding>
 @property(assign, nonatomic) NSInteger answer_count;
 @property(assign, nonatomic) NSInteger last_edit_date;
-@property(strong, nonatomic) User *owner;
+@property(strong, nonatomic) User* owner;
 @property(strong, nonatomic) NSString *link;
 @property(strong, nonatomic) NSArray<NSString*> *tags;
 @property(assign, nonatomic) NSInteger view_count;

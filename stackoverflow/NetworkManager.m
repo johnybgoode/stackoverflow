@@ -8,6 +8,7 @@
 
 #import "NetworkManager.h"
 #import "QuestionItem.h"
+#import <CoreData/CoreData.h>
 
 @implementation NetworkManager
 static NetworkManager * _Instance;
@@ -25,6 +26,57 @@ static NetworkManager * _Instance;
     
     return self;
 }
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if( _managedObjectModel!=nil){
+        return _managedObjectModel;
+    }
+    
+    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
+    
+    return _managedObjectModel;
+}
+- (NSPersistentStoreCoordinator *)coordinator
+{
+    if(nil != _coordinator)
+        return _coordinator;
+    
+    NSURL *storeURL = [[[[NSFileManager defaultManager]
+                         URLsForDirectory:NSDocumentDirectory
+                         inDomains:NSUserDomainMask]
+                        lastObject]
+                       URLByAppendingPathComponent:@"stackoverflow.sqlite"];
+    
+    _coordinator = [[NSPersistentStoreCoordinator alloc]
+                    initWithManagedObjectModel:self.managedObjectModel];
+    
+    NSError *error = nil;
+    if(![_coordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                   configuration:nil
+                                             URL:storeURL
+                                         options:nil
+                                           error:&error]){
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    
+    return _coordinator;
+}
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if(nil != _managedObjectContext)
+        return _managedObjectContext;
+    
+    NSPersistentStoreCoordinator *storeCoordinator = self.coordinator;
+    
+    if(nil != storeCoordinator){
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [_managedObjectContext setPersistentStoreCoordinator:storeCoordinator];
+    }
+    
+    return _managedObjectContext;
+}
+
 -  (void) get:(NSString*)params andUrl:(NSString*)subUrl
       success:(void (^)(NSDictionary *response))successBlock
         error:(void (^)(NSString *errorMessage))errorBlock {
@@ -98,6 +150,29 @@ static NetworkManager * _Instance;
         for(NSDictionary *dict in response[@"items"]){
             QuestionItem *qi = [[QuestionItem alloc] initWithDictionary:dict];
             [questionItems addObject:qi];
+            NSManagedObject * questionItm = [NSEntityDescription insertNewObjectForEntityForName:@"QuestionItm"
+                                                                          inManagedObjectContext:self.managedObjectContext];
+            [questionItm setValue:dict[@"accepted_answer_id"] forKey:@"accepted_answer_id"];
+            [questionItm setValue:dict[@"answer_count"] forKey:@"answer_count"];
+             [questionItm setValue:dict[@"creation_date"] forKey:@"creation_date"];
+             [questionItm setValue:dict[@"isAnswered"] forKey:@"isAnswered"];
+            [questionItm setValue:dict[@"last_activity_date"] forKey:@"last_activity_date"];
+            [questionItm setValue:dict[@"last_edit_date"] forKey:@"last_edit_date"];
+             [questionItm setValue:dict[@"link"] forKey:@"link"];
+              [questionItm setValue:dict[@"question_id"] forKey:@"question_id"];
+             [questionItm setValue:dict[@"score"] forKey:@"score"];
+             [questionItm setValue:dict[@"title"] forKey:@"title"];
+            NSError * arrayError;
+            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:qi.tags requiringSecureCoding:NO error:&arrayError];
+            [questionItm setValue:arrayData forKey:@"tags"];
+            //NSError * ownerError;
+           // NSData *ownerData = [NSKeyedArchiver archivedDataWithRootObject:qi.owner requiringSecureCoding:NO error:&ownerError];
+            [questionItm setValue:qi.owner forKey:@"owner"];
+             NSLog(@"questionItm: %@", questionItm);
+        }
+        if([self.managedObjectContext hasChanges] && ![self.managedObjectContext save:nil]){
+            NSLog(@"Unresolved error!");
+            abort();
         }
         successBlock(questionItems);
     } error:^(NSString *errorMessage) {

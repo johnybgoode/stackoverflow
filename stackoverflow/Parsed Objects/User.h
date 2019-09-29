@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface User : NSObject
+@interface User : NSManagedObject<NSCoding>
 @property(assign, nonatomic) NSInteger accept_rate;
 @property(assign, nonatomic) NSInteger user_id;
 @property(strong, nonatomic) NSString *user_type;

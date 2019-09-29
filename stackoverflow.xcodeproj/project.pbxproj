@@ -21,6 +21,7 @@
 		2CCB2B9023338858004F5CA8 /* UIViewController+Alert.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B8F23338857004F5CA8 /* UIViewController+Alert.m */; };
 		2CCB2B95233389DD004F5CA8 /* QuestionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B94233389DD004F5CA8 /* QuestionTableViewCell.m */; };
 		2CCB2B992333B214004F5CA8 /* TagCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B982333B214004F5CA8 /* TagCollectionViewCell.m */; };
+		2CDADA57233BC7AC00B65962 /* QuestionsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2CDADA55233BC7AC00B65962 /* QuestionsModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		2CCB2B94233389DD004F5CA8 /* QuestionTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionTableViewCell.m; sourceTree = "<group>"; };
 		2CCB2B972333B214004F5CA8 /* TagCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagCollectionViewCell.h; sourceTree = "<group>"; };
 		2CCB2B982333B214004F5CA8 /* TagCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TagCollectionViewCell.m; sourceTree = "<group>"; };
+		2CDADA56233BC7AC00B65962 /* QuestionsModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QuestionsModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				2C6A46DD232FF2E900AB0669 /* AppDelegate.h */,
 				2C6A46DE232FF2E900AB0669 /* AppDelegate.m */,
 				2C6A46E3232FF2E900AB0669 /* Main.storyboard */,
+				2CDADA55233BC7AC00B65962 /* QuestionsModel.xcdatamodeld */,
 				2C6A46E6232FF2EB00AB0669 /* Assets.xcassets */,
 				2C6A46E8232FF2EB00AB0669 /* LaunchScreen.storyboard */,
 				2C6A46EB232FF2EB00AB0669 /* Info.plist */,
@@ -331,6 +334,7 @@
 				2CCB2B992333B214004F5CA8 /* TagCollectionViewCell.m in Sources */,
 				2C6A46ED232FF2EB00AB0669 /* main.m in Sources */,
 				2CCB2B95233389DD004F5CA8 /* QuestionTableViewCell.m in Sources */,
+				2CDADA57233BC7AC00B65962 /* QuestionsModel.xcdatamodeld in Sources */,
 				2C6A46DF232FF2E900AB0669 /* AppDelegate.m in Sources */,
 				2CCB2B9023338858004F5CA8 /* UIViewController+Alert.m in Sources */,
 			);
@@ -426,7 +430,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -443,6 +447,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -484,7 +489,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -495,6 +500,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -641,6 +647,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2CDADA55233BC7AC00B65962 /* QuestionsModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2CDADA56233BC7AC00B65962 /* QuestionsModel.xcdatamodel */,
+			);
+			currentVersion = 2CDADA56233BC7AC00B65962 /* QuestionsModel.xcdatamodel */;
+			path = QuestionsModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 2C6A46D2232FF2E900AB0669 /* Project object */;
 }

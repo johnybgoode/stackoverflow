@@ -7,13 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NetworkManager : NSObject
 @property(strong, atomic) NSString* urlString;
+
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *coordinator;
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 + (instancetype) sharedSource;
 - (void) getQuestions:(void (^)(NSArray *items))successBlock  Error:(void (^)(NSString *errorMessage))errorBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

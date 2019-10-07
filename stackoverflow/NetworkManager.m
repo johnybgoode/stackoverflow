@@ -11,6 +11,7 @@
 #import <CoreData/CoreData.h>
 
 #import "QuestionItemEntity+CoreDataClass.h"
+#import "UserEntity+CoreDataClass.h"
 
 @interface NetworkManager ()
 
@@ -161,37 +162,37 @@
                          withFilter:(QuestionItemsFilter *)filter
                             success:(void (^)(NSArray *items))successBlock
                             failure:(void (^)(NSString *errorMessage))errorBlock  {
-
-    if (sourceType == kDataSourceTypeCache) {
-
-        NSArray <QuestionItem *> *cachedItems = [self loadQuestionsFromCacheWithFilter:filter];
-        if (cachedItems && cachedItems.count > 0) {
-
-            NSArray <QuestionItem *> *filteredItems = [cachedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
-            successBlock(filteredItems);
-            return;
+    switch (sourceType) {
+        case kDataSourceTypeCache:{
+            NSArray <QuestionItem *> *cachedItems = [self loadQuestionsFromCacheWithFilter:filter];
+            if (cachedItems && cachedItems.count > 0) {
+                
+                NSArray <QuestionItem *> *filteredItems = [cachedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
+                successBlock(filteredItems);
+                return;
+                break;
+            }
+            else{
+                
+            }
         }
+        case kDataSourceTypeNetwork:{
+            [self loadQuestionsFromNetwork:^(NSArray<QuestionItem *> *loadedItems) {
+                
+                [self saveQuestionsToCache:loadedItems];
+                
+                NSArray <QuestionItem *> *filteredItems = [loadedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
+                successBlock(filteredItems);
+                
+            } onFailure:^(NSString *errorText) {
+                
+                errorBlock(errorText);
+            }];
+        }
+        default:
+            break;
     }
-    if (sourceType == kDataSourceTypeCache) {
-
-        successBlock(@[]);
-        return;
-    }
-
-    if (sourceType == kDataSourceTypeNetwork) {
-
-        [self loadQuestionsFromNetwork:^(NSArray<QuestionItem *> *loadedItems) {
-
-            [self saveQuestionsToCache:loadedItems];
-
-            NSArray <QuestionItem *> *filteredItems = [loadedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
-            successBlock(filteredItems);
-
-        } onFailure:^(NSString *errorText) {
-
-            errorBlock(errorText);
-        }];
-    }
+       
 }
 
 
@@ -256,6 +257,49 @@
         failureCompletion(errorMessage);
     }];
 }
+- (void)clearCoreData {
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"QuestionItemEntity" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    
+    NSError *error = nil;
+    NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        NSLog(@"Отсутствуют объекты для удаления");
+    }
+    
+    for (QuestionItemEntity *currentObject in fetchedObjects) {
+        [self.managedObjectContext deleteObject:currentObject];
+    }
+    
+    entity = [NSEntityDescription entityForName:@"UserEntity" inManagedObjectContext:self.managedObjectContext];
+     [fetchRequest setEntity:entity];
+    error = nil;
+    fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        NSLog(@"Отсутствуют объекты для удаления");
+    }
+    
+    for (UserEntity *currentObject in fetchedObjects) {
+        [self.managedObjectContext deleteObject:currentObject];
+    }
+    
+    [self saveContext];
+    
+}
 
 
+- (void)saveContext
+{
+    NSError *error = nil;
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil) {
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+            
+            NSLog(@"Saving didn't work so well.. Error: %@, %@", error, [error userInfo]);
+            abort();
+        }
+    }
+}
 @end

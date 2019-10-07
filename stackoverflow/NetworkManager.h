@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, DataSourceType) {
 
-    kDataSourceTypeCache,
-    kDataSourceTypeNetwork
+    kDataSourceTypeCache = 0,
+    kDataSourceTypeNetwork = 1
 };
 
 @interface NetworkManager : NSObject
@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, DataSourceType) {
                          withFilter:(QuestionItemsFilter *)filter
                             success:(void (^)(NSArray *items))successBlock
                             failure:(void (^)(NSString *errorMessage))errorBlock;
-
+- (void)clearCoreData;
 @end
 
 NS_ASSUME_NONNULL_END

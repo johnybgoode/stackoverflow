@@ -10,17 +10,33 @@
 #import "QuestionItem.h"
 #import <CoreData/CoreData.h>
 
+#import "QuestionItemEntity+CoreDataClass.h"
+
+@interface NetworkManager ()
+
+@property (strong, atomic) NSString* urlString;
+
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *coordinator;
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+
+@end
+
+
 @implementation NetworkManager
-static NetworkManager * _Instance;
-+ (instancetype) sharedSource
-{
-    
-    if (!_Instance) {
-        _Instance = [[self alloc] init];
-    }
-    return _Instance;
+
++ (instancetype) sharedSource {
+
+    static NetworkManager *_instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[self alloc] init];
+    });
+    return _instance;
 }
-- (id) init{
+- (instancetype) init {
+
+    self = [super init];
     
     self.urlString = @"https://api.stackexchange.com/2.2";
     
@@ -106,6 +122,7 @@ static NetworkManager * _Instance;
     }];
     [getDataTask resume];
 }
+
 - (NSString *) errorMessageWithStatusCode:(NSInteger)statusCode{
     
     switch (statusCode) {
@@ -139,46 +156,106 @@ static NetworkManager * _Instance;
         }
     }
 }
-- (void) getQuestions:(void (^)(NSArray *items))successBlock  Error:(void (^)(NSString *errorMessage))errorBlock{
+
+- (void)loadQuestionsWithSourceType:(enum DataSourceType)sourceType
+                         withFilter:(QuestionItemsFilter *)filter
+                            success:(void (^)(NSArray *items))successBlock
+                            failure:(void (^)(NSString *errorMessage))errorBlock  {
+
+    if (sourceType == kDataSourceTypeCache || sourceType == kDataSourceTypeAllSources) {
+
+        NSArray <QuestionItem *> *cachedItems = [self loadQuestionsFromCacheWithFilter:filter];
+        if (cachedItems && cachedItems.count > 0) {
+
+            NSArray <QuestionItem *> *filteredItems = [cachedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
+            successBlock(filteredItems);
+            return;
+        }
+    }
+    if (sourceType == kDataSourceTypeCache) {
+
+        successBlock(@[]);
+        return;
+    }
+
+    if (sourceType == kDataSourceTypeNetwork || sourceType == kDataSourceTypeAllSources) {
+
+        [self loadQuestionsFromNetwork:^(NSArray<QuestionItem *> *loadedItems) {
+
+            [self saveQuestionsToCache:loadedItems];
+
+            NSArray <QuestionItem *> *filteredItems = [loadedItems filteredArrayUsingPredicate:[filter filtrationPredicate]];
+            successBlock(filteredItems);
+
+        } onFailure:^(NSString *errorText) {
+
+            errorBlock(errorText);
+        }];
+    }
+}
+
+
+- (void)saveQuestionsToCache:(NSArray <QuestionItem *> *)questionItems {
+
+    for (QuestionItem *item in questionItems) {
+        [item addToManagedObjectContext:self.managedObjectContext];
+    }
+
+    if (![self.managedObjectContext hasChanges]) {
+        return;
+    }
+
+    NSError *savingError = nil;
+    if (![self.managedObjectContext save:&savingError]) {
+
+        NSAssert(!savingError, @"Core Data saving Error %@", savingError);
+        return;
+    }
+}
+
+- (NSArray <QuestionItem *> *)loadQuestionsFromCacheWithFilter:(QuestionItemsFilter *)filter {
+
+    NSFetchRequest <QuestionItemEntity *> *request = [QuestionItemEntity fetchRequest];
+
+    NSError *fetchingError = nil;
+    NSArray <QuestionItemEntity *> *entities = [self.managedObjectContext executeFetchRequest:request
+                                                                                        error:&fetchingError];
+
+    if (fetchingError) {
+        return nil;
+    }
+
+    NSMutableArray <QuestionItem *> *items = [NSMutableArray array];
+    for (QuestionItemEntity *entity in entities) {
+
+        QuestionItem *item = [[QuestionItem alloc] initWithManagedObject:entity];
+        [items addObject:item];
+    }
+    return items;
+}
+
+- (void)loadQuestionsFromNetwork:(void (^)(NSArray <QuestionItem *> *))successCompletion
+                       onFailure:(void (^)(NSString *))failureCompletion {
+
     NSString *subUrl = @"/questions";
     NSInteger fromDate = [[NSDate date] timeIntervalSince1970]-7*24*60*60;
     NSInteger toDate = [[NSDate date] timeIntervalSince1970];
     NSString *prs = [NSString stringWithFormat:@"sort=%@&min=%i&fromdate=%li&todate=%li&site=%@",@"votes", 10, fromDate, toDate, @"stackoverflow"];
-    
+
     [self get:prs andUrl:subUrl success:^(NSDictionary *response) {
-        NSMutableArray * questionItems = [NSMutableArray array];
+
+        NSMutableArray <QuestionItem *> *questionItems = [NSMutableArray array];
         for(NSDictionary *dict in response[@"items"]){
-            QuestionItem *qi = [[QuestionItem alloc] initWithDictionary:dict];
-            [questionItems addObject:qi];
-            NSManagedObject * questionItm = [NSEntityDescription insertNewObjectForEntityForName:@"QuestionItm"
-                                                                          inManagedObjectContext:self.managedObjectContext];
-            [questionItm setValue:dict[@"accepted_answer_id"] forKey:@"accepted_answer_id"];
-            [questionItm setValue:dict[@"answer_count"] forKey:@"answer_count"];
-             [questionItm setValue:dict[@"creation_date"] forKey:@"creation_date"];
-             [questionItm setValue:dict[@"isAnswered"] forKey:@"isAnswered"];
-            [questionItm setValue:dict[@"last_activity_date"] forKey:@"last_activity_date"];
-            [questionItm setValue:dict[@"last_edit_date"] forKey:@"last_edit_date"];
-             [questionItm setValue:dict[@"link"] forKey:@"link"];
-              [questionItm setValue:dict[@"question_id"] forKey:@"question_id"];
-             [questionItm setValue:dict[@"score"] forKey:@"score"];
-             [questionItm setValue:dict[@"title"] forKey:@"title"];
-            NSError * arrayError;
-            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:qi.tags requiringSecureCoding:NO error:&arrayError];
-            [questionItm setValue:arrayData forKey:@"tags"];
-            //NSError * ownerError;
-           // NSData *ownerData = [NSKeyedArchiver archivedDataWithRootObject:qi.owner requiringSecureCoding:NO error:&ownerError];
-            [questionItm setValue:qi.owner forKey:@"owner"];
-             NSLog(@"questionItm: %@", questionItm);
+
+            QuestionItem *mappedItem = [[QuestionItem alloc] initWithDictionary:dict];
+            [questionItems addObject:mappedItem];
         }
-        if([self.managedObjectContext hasChanges] && ![self.managedObjectContext save:nil]){
-            NSLog(@"Unresolved error!");
-            abort();
-        }
-        successBlock(questionItems);
+        successCompletion(questionItems);
+
     } error:^(NSString *errorMessage) {
-        errorBlock(errorMessage);
+        failureCompletion(errorMessage);
     }];
-    
-    
 }
+
+
 @end

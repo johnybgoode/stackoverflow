@@ -13,6 +13,8 @@
 #import "QuestionItem.h"
 #import "TagCollectionViewCell.h"
 
+#import "QuestionItemsFilter.h"
+
 
 @interface MainViewController ()
 
@@ -27,33 +29,35 @@
 
 @implementation MainViewController
 
+
+
+#pragma mark - View LifeCycle
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 
+    self.searchBar.delegate= self;
+    self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    
     self.operationQueue = [[NSOperationQueue alloc] init];
     self.imageOperations = [[NSMutableDictionary alloc] init];
     self.images = [[NSMutableDictionary alloc] init];
 
-    [[NetworkManager sharedSource] getQuestions:^(NSArray * _Nonnull items) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.questions = items;
-            [self.tableView reloadData];
-        });
-    } Error:^(NSString * _Nonnull errorMessage) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlertWithTitle:@"Ошибка" andMessage:errorMessage];
-        });
-    }];
+    [self loadQuestionsBySearchQuery:nil];
 }
+
+#pragma mark - <UITableViewDataSource>
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.questions count];
 }
+
 - (nonnull QuestionTableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
 
     QuestionTableViewCell *cell  = (QuestionTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"questionCell" forIndexPath:indexPath];
@@ -61,9 +65,11 @@
 
     cell.tags_collection_view.tag = indexPath.row;
     [self initCell:cell withQuestionItem:qi];
-    
+
     return cell;
 }
+
+#pragma mark - <UITableViewDelegate>
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
 
@@ -79,6 +85,32 @@
 
     [self cancelImageLoadingByIndex:indexPath.row];
 }
+
+#pragma mark - Questions Loading
+
+- (void)loadQuestionsBySearchQuery:(NSString *)searchText {
+
+    searchText = (searchText.length == 0) ? nil : searchText;
+    QuestionItemsFilter *filter = [QuestionItemsFilter filterBySearchQuery:searchText];
+
+    [[NetworkManager sharedSource] loadQuestionsWithSourceType:kDataSourceTypeAllSources
+                                                    withFilter:filter
+      success:^(NSArray * _Nonnull items) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            self.questions = items;
+            [self.tableView reloadData];
+        });
+    } failure:^(NSString * _Nonnull errorMessage) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showAlertWithTitle:@"Ошибка" andMessage:errorMessage];
+        });
+    }];
+}
+
+#pragma mark - Images Loading
 
 - (void)loadImageByIndex:(NSInteger)imageIndex completion:(void (^)(UIImage *))completion {
 
@@ -100,7 +132,6 @@
     if (existOperation != nil && !existOperation.isCancelled) {
         return;
     }
-
 
     QuestionItem *questionItem = self.questions[imageIndex];
     NSOperation *imageOperation = [NSBlockOperation blockOperationWithBlock:^{
@@ -137,28 +168,6 @@
     self.imageOperations[@(imageIndex)] = nil;
 }
 
-/*- (void)loadImageByIndex:(NSNumber *)imageIndexNumber {
-
-    QuestionItem *questionItem = self.questions[imageIndexNumber.integerValue];
-    NSURL *imageURL = [NSURL URLWithString:questionItem.owner.profile_image];
-    NSData *imageData = [[NSData alloc] initWithContentsOfURL: imageURL];
-
-    if (imageData == nil) {
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.imageOperations[imageIndexNumber] = nil;
-        });
-        return;
-    }
-    UIImage *loadedImage = [UIImage imageWithData: imageData];
-
-    dispatch_sync(dispatch_get_main_queue(), ^{
-
-        self.imageOperations[imageIndexNumber] = nil;
-        self.images[imageIndexNumber] = loadedImage;
-    });
-}*/
-
 - (void) initCell:(QuestionTableViewCell*)qtc withQuestionItem:(QuestionItem*)qi{
     
     qtc.user_name_lbl.text = qi.owner.display_name;
@@ -191,7 +200,10 @@
     return CGSizeMake(100.f, 40.f);
 }
 
-
+- (void)searchBar:(UISearchBar *)searchBar
+    textDidChange:(NSString *)searchText{
+    [self loadQuestionsBySearchQuery:searchText];
+}
 
 
 

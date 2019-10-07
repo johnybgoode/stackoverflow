@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0A6-Xn-LjE">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="108" width="414" height="754"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="questionCell" rowHeight="285" id="caU-ii-DKA" customClass="QuestionTableViewCell">
@@ -116,17 +116,25 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="5yK-82-A46">
+                                <rect key="frame" x="0.0" y="52" width="414" height="56"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="0A6-Xn-LjE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="2FU-p7-BBe"/>
-                            <constraint firstItem="0A6-Xn-LjE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="SKD-ic-vak"/>
+                            <constraint firstItem="5yK-82-A46" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Bsb-4l-huD"/>
+                            <constraint firstItem="0A6-Xn-LjE" firstAttribute="top" secondItem="5yK-82-A46" secondAttribute="bottom" id="DYd-k7-cM5"/>
+                            <constraint firstItem="5yK-82-A46" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="VKy-WD-nv2"/>
+                            <constraint firstItem="5yK-82-A46" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="dCH-jZ-KCA"/>
                             <constraint firstItem="0A6-Xn-LjE" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="jnK-2I-cN1"/>
                             <constraint firstItem="0A6-Xn-LjE" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="xXI-LB-xkN"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="searchBar" destination="5yK-82-A46" id="841-re-xd6"/>
                         <outlet property="tableView" destination="0A6-Xn-LjE" id="c82-xE-pI0"/>
                     </connections>
                 </viewController>

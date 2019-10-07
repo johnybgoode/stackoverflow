@@ -162,7 +162,7 @@
                             success:(void (^)(NSArray *items))successBlock
                             failure:(void (^)(NSString *errorMessage))errorBlock  {
 
-    if (sourceType == kDataSourceTypeCache || sourceType == kDataSourceTypeAllSources) {
+    if (sourceType == kDataSourceTypeCache) {
 
         NSArray <QuestionItem *> *cachedItems = [self loadQuestionsFromCacheWithFilter:filter];
         if (cachedItems && cachedItems.count > 0) {
@@ -178,7 +178,7 @@
         return;
     }
 
-    if (sourceType == kDataSourceTypeNetwork || sourceType == kDataSourceTypeAllSources) {
+    if (sourceType == kDataSourceTypeNetwork) {
 
         [self loadQuestionsFromNetwork:^(NSArray<QuestionItem *> *loadedItems) {
 

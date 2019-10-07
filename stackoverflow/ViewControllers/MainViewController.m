@@ -18,13 +18,15 @@
 
 @interface MainViewController ()
 
+
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) NSMutableDictionary <NSNumber*, NSOperation *> *imageOperations;
 @property (nonatomic, strong) NSMutableDictionary <NSNumber*, UIImage *> *images;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *questions;
-
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 @end
 
 @implementation MainViewController
@@ -38,7 +40,15 @@
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-
+    
+    self.refreshControl = [[UIRefreshControl alloc]init];
+    [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+    if (@available(iOS 10.0, *)) {
+        self.tableView.refreshControl = self.refreshControl;
+    } else {
+        [self.tableView addSubview:self.refreshControl];
+    }
+    
     self.searchBar.delegate= self;
     self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
     
@@ -87,13 +97,33 @@
 }
 
 #pragma mark - Questions Loading
-
+- (void) refreshTable{
+    self.searchBar.text = @"";
+     QuestionItemsFilter *filter = [QuestionItemsFilter filterBySearchQuery:nil];
+    [[NetworkManager sharedSource] loadQuestionsWithSourceType:kDataSourceTypeNetwork
+                                                    withFilter:filter
+                                                       success:^(NSArray * _Nonnull items) {
+                                                           
+                                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                                               
+                                                               self.questions = items;
+                                                               [self.refreshControl endRefreshing];
+                                                               [self.tableView reloadData];
+                                                           });
+                                                       } failure:^(NSString * _Nonnull errorMessage) {
+                                                           
+                                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                                               [self.refreshControl endRefreshing];
+                                                               [self showAlertWithTitle:@"Ошибка" andMessage:errorMessage];
+                                                           });
+                                                       }];
+}
 - (void)loadQuestionsBySearchQuery:(NSString *)searchText {
 
     searchText = (searchText.length == 0) ? nil : searchText;
     QuestionItemsFilter *filter = [QuestionItemsFilter filterBySearchQuery:searchText];
 
-    [[NetworkManager sharedSource] loadQuestionsWithSourceType:kDataSourceTypeAllSources
+    [[NetworkManager sharedSource] loadQuestionsWithSourceType:kDataSourceTypeCache
                                                     withFilter:filter
       success:^(NSArray * _Nonnull items) {
 

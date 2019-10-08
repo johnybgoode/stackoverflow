@@ -15,6 +15,7 @@
 		2C6A46F7232FF2EB00AB0669 /* stackoverflowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C6A46F6232FF2EB00AB0669 /* stackoverflowTests.m */; };
 		2C6A4702232FF2EB00AB0669 /* stackoverflowUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C6A4701232FF2EB00AB0669 /* stackoverflowUITests.m */; };
 		2CC86296234A329D009D1772 /* xcassets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CC86295234A329D009D1772 /* xcassets.xcassets */; };
+		2CC8629B234BE027009D1772 /* QuestionDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CC8629A234BE027009D1772 /* QuestionDetailViewController.m */; };
 		2CCB2B862332654A004F5CA8 /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B852332654A004F5CA8 /* NetworkManager.m */; };
 		2CCB2B892332CD6B004F5CA8 /* QuestionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B882332CD6B004F5CA8 /* QuestionItem.m */; };
 		2CCB2B8D2332D234004F5CA8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB2B8C2332D234004F5CA8 /* User.m */; };
@@ -59,6 +60,8 @@
 		2C6A4701232FF2EB00AB0669 /* stackoverflowUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = stackoverflowUITests.m; sourceTree = "<group>"; };
 		2C6A4703232FF2EB00AB0669 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2CC86295234A329D009D1772 /* xcassets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = xcassets.xcassets; sourceTree = "<group>"; };
+		2CC86299234BE027009D1772 /* QuestionDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionDetailViewController.h; sourceTree = "<group>"; };
+		2CC8629A234BE027009D1772 /* QuestionDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionDetailViewController.m; sourceTree = "<group>"; };
 		2CCB2B842332654A004F5CA8 /* NetworkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
 		2CCB2B852332654A004F5CA8 /* NetworkManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkManager.m; sourceTree = "<group>"; };
 		2CCB2B872332CD6B004F5CA8 /* QuestionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionItem.h; sourceTree = "<group>"; };
@@ -198,6 +201,8 @@
 			children = (
 				2C6A46E0232FF2E900AB0669 /* MainViewController.h */,
 				2C6A46E1232FF2E900AB0669 /* MainViewController.m */,
+				2CC86299234BE027009D1772 /* QuestionDetailViewController.h */,
+				2CC8629A234BE027009D1772 /* QuestionDetailViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -335,6 +340,7 @@
 				2CCB2B892332CD6B004F5CA8 /* QuestionItem.m in Sources */,
 				2CCB2B862332654A004F5CA8 /* NetworkManager.m in Sources */,
 				2CCB2B8D2332D234004F5CA8 /* User.m in Sources */,
+				2CC8629B234BE027009D1772 /* QuestionDetailViewController.m in Sources */,
 				2C6A46E2232FF2E900AB0669 /* MainViewController.m in Sources */,
 				C3E9D54C23415E590000DBFD /* QuestionItemsFilter.m in Sources */,
 				2CCB2B992333B214004F5CA8 /* TagCollectionViewCell.m in Sources */,

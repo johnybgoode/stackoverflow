@@ -257,6 +257,28 @@
         failureCompletion(errorMessage);
     }];
 }
+- (void) loadQuestionAnswersForQuestionId:(NSInteger)questionId
+                      onSuccess:(void (^)(NSArray * answers))successCompletion
+                       onFailure:(void (^)(NSString * errorString))failureCompletion {
+    
+    NSString *subUrl = [NSString stringWithFormat:@"/questions/{%li}/answers", questionId];
+   
+    NSString *prs = [NSString stringWithFormat:@"sort=%@&order=%@&site=%@",@"votes", @"desc", @"stackoverflow"];
+    
+    [self get:prs andUrl:subUrl success:^(NSDictionary *response) {
+        
+        NSMutableArray <QuestionItem *> *questionItems = [NSMutableArray array];
+        for(NSDictionary *dict in response[@"items"]){
+            
+            QuestionItem *mappedItem = [[QuestionItem alloc] initWithDictionary:dict];
+            [questionItems addObject:mappedItem];
+        }
+        successCompletion(questionItems);
+        
+    } error:^(NSString *errorMessage) {
+        failureCompletion(errorMessage);
+    }];
+}
 - (void)clearCoreData {
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];

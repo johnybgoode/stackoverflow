@@ -27,7 +27,11 @@ typedef NS_ENUM(NSUInteger, DataSourceType) {
                          withFilter:(QuestionItemsFilter *)filter
                             success:(void (^)(NSArray *items))successBlock
                             failure:(void (^)(NSString *errorMessage))errorBlock;
+- (void) loadQuestionAnswersForQuestionId:(NSInteger)questionId
+                                onSuccess:(void (^)(NSArray * answers))successCompletion
+                                onFailure:(void (^)(NSString * errorString))failureCompletion;
 - (void)clearCoreData;
+
 @end
 
 NS_ASSUME_NONNULL_END
